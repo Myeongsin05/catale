@@ -1,0 +1,248 @@
+# mybatis 데이터 베이스 처리 순서
+1. sql 작성 확인
+	select * 
+	from emp01
+	where ename like '%'||''||'%'
+	전달할 값과 결과의 형태를 확인..
+	전달할 값 : where조건문, insert, update 구분의 데이터
+	결과값 : insert, update, delete 구문의 int형
+		select count(*) 단일 int형
+		select job 단일 String형 또는 배열형 String형
+		select * from emp where empno = 7800 
+			key로 검색할 때는 단일 객체형
+		select * 
+		from emp01
+		where ename like '%'||''||'%'
+			객체형 list 배열형
+	==> dao 매개변수, 리턴유형 결정..		
+2. dao 선언
+	- XXXmapper.xml 형처리
+	- @Select 등 annotation 형태 처리
+	- 전송값 sql에 사용할 #{name}에 맞게
+		VO는 getName()이 있으면 되고,
+		요청값을 경우 메서드의 매개변수로
+		search(@Param("name") String name)
+		형태로 처리하면 된다.
+3. service 선언
+	- 같은 메서드로
+		controller에서 넘겨줄 db에 처리할 데이터를
+		매개변수로 처리하고,
+	- db에서온 결과를 return 처리한다.
+	- 중간에 업무내용에 따라서 데이터를 조건/반복에 의해서
+		처리한다.
+		ex) 사원명과 직책명으로 초기화면에 전체 검색시
+		if(sch.getEname()==null) sch.setEname("");
+		형태로 처리
+4. controller 선언
+	- 브라우저에서 호출할 url 패턴과
+	- 요청값에 대한 패턴 
+		단일 데이터 요청 @RequestParam()
+		객체로 데이터 요청 Emp sch  (모델 + 요청값)을 처리해 준다
+	- 모델데이터의 대한 패턴
+		Model d 매개변수로 받은 값에 service에 넘겨온 데이터를 모델 
+		명으로 선언하여 화면단(view/jsp)에 사용할 준비를 한다.
+		ex) d.addAttribute("empList", service.getEmplist(sch));
+		
+5. view(jsp) 처리
+	- 위 컨트롤러에 의해 초기 화면이 처리되고
+	- form의 요청값에 의해, 처리된 모델 데이터를 가지고 조건문 반복문과 함께
+		데이터를 화면에 출력한다.
+	  form 요청값 name="key" value="val"
+	  모델 데이터 처리 ${모델명}, ${모델명.getProperty명}
+	  모델 데이터의 반복 처리
+	  	<c:forEach var="emp" items="${empList}"> 넘겨준 객체형 list데이터
+	  		${emp.empno} 단일객체 안에 getProperty로 가져오기
+	  		${emp.ename}
+ex) select *
+    from dept01
+    where dname like '%'||''||'%'
+    and loc like '%'||''||'%'
+1. sql 확인
+select *
+from dept01
+where dname like '%'||#{dname}||'%'
+and loc like '%'||#{loc}||'%'
+	vo ==>
+	Dept
+	private int deptno;
+	private String dname;
+	private String loc;
+	
+2. dao 생성
+	@Select("")
+	List<Dept> getDeptList(Dept sch);
+----------------------
+3. service 생성
+4. controller 생성
+----------------------
+5. view단 출처 처리..
+
+# DB 등록 처리.
+1. 등록 처리는 화면에 form에서 name값과 value값이 연결된 VO객체로 controller단에
+전달하고, 이것을 service, dao에 거쳐서 DB서버에서 sql에 받은 데이터를 DB서버에 할당
+하는 것을 말한다.
+2. 처리 순서
+    1) controller 초기 화면 로딩, 입력값이 있는 view단 처리..
+    	name="empno" ==> vo property 로 사용 예정..
+	2) sql 작성/mapper처리
+		insert into 테이블명 values(데이터1, 데이터2.... )
+INSERT INTO emp01 values(#{empno}, #{ename},#{job},#{mgr},
+	to_date(#{hiredatestr},'YYYY-MM-DD'),#{sal},
+	#{comm},#{deptno})		
+	3) 입력값을 할당할 vo작성	
+	4) service작성
+		dao리턴값이 1이상일 때, 등록 성공 처리..
+	5) controller작성(form 입력값에 의한 DB처리)
+		결과 메시지 모델로 등록
+	6) 화면단(view)메시지 처리..   
+	
+# # 3가지 입력시 동일 확인,(갯수, type, 이름 반드시 확인)
+	1. 화면에 [name=속성]
+	2. vo의 속성
+	3. sql annotation #{속성}	
+# member10 테이블 등록
+1. [jsp]list화면에서 초기화면 호출
+2. [controller] insertMember 메서드 선언과 url 메치 초기화면
+	insertMember(
+3. [jsp] 초기화면
+	입력form 선언
+=================================	
+4. [vo] 위 입력 form의 name="속성"에 vo property동일 처리
+5. [dao]
+	sql 확인/sql mapper용 작성
+	@Insert("sql mapper용)
+	int insertMember(Member ins);
+6. [service단]
+	등록이 0초과할 때, 회원등록 성공|회원 등록 실패
+7. [controller] 		
+	service단 처리
+	모델 데이터 msg service단 등록 내용처리
+8. [jsp]
+	jsp의 msg 출력..
+
+
+# 상세화면
+1. 리스트된 데이터에서 더블클릭하거나, 특정한 인터페이스에 의해서
+조금 더 구체적인 항목인 있는 화면이 로딩되어 이 내용을 확인하고
+수정/삭제 처리하는 화면을 할 수 있는 처리를 말한다.
+2. 주요파일(사원정보) 
+	[controller] -A04_EmpController.java
+		empDetail : 상세화면 기본화면로딩
+			사원번호를 받아서 DB에 단위 row데이터를 
+			가져와서 객체Emp로 모델데이터로 할당
+			return "a17_empDetail"
+	[service]  - EmpService.java
+	[dao] - EmpDao.java
+		@Select("select * from emp01 
+			where empno=#{empno}")
+		Emp getEmp(Emp emp);
+	[view] -
+		a12_empList.jsp
+			<tr ondblclick="goDetail(${emp.empno)")
+			function goDetail(empno){
+				location.href="${path}/empDetail?empno"+empno
+			}
+		a17_empDetail.jsp
+		<input name="empno" value="${emp.empno}"/>				 
+		<input name="ename" value="${emp.ename}"/>
+		각, 사원의 정보를 처리 한다.
+	최적으로 이 기능을 구현할 때, 구현될 순서를 파일별로 정리해서 조장님이
+	조원들과 협의해서 전달해주세요 
+	ex) 코드를 할 때, 
+		1. 순서를 효과적을 잡아야 한다.
+			- 중간중간에 화면이 정상로딩
+			- 요청값이 정확하게 전달되는지를 확인하는 프로세스
+				
+		0. 파일명과 내용을 간단히 정리 필요	
+	    1. A04_EmpController.java(초기화면 로딩)
+	    	- empDetail 요청값 처리(defaultValue), 요청값
+	    		초기화면 로딩 확인후, 요청값을 넘겨서 화면이 로딩
+	    		empDetail?empno=30
+	    2. a17_empDetail.jsp(초기화면 출력)
+			- 사원상세	 ${param.empno}
+		3. a12_empList.jsp(특정 tr을 클릭시, 위 기능 처리 확인)
+		4. DB처리
+			1) sql 확인// mapper에 들어가 sql로 변경
+				select * 
+				from emp01 
+				where empno=#{empno}
+			2) dao 작성
+				@어노테이션방식/mappper방식
+				Emp getEmp(Emp emp);		
+		5. service
+		6. controller(A04_EmpController.java)
+			1) 모델데이터를 service단까지 만들어온 내용을
+				d.addAttribute("emp",service.getEmp(empno));
+		7. view 화면구현(a17_empDetail.jsp)
+			<input name="empno" value="${emp.empno}"/>
+		8. 마지막 테스트..
+			empList 화면에서 시작 처리 내용 확인..
+			empno ename job mgr hiredate sal comm deptno
+# 상세화면에서 수정 처리
+1. sql 작성
+	update emp01
+		set ename=#{ename},
+			job=#{job},	
+			mgr=#{mgr},	
+			hiredate=to_date(#{hiredatestr},'YYYY-MM-DD'),	
+			sal=#{sal},	
+			comm=#{comm},
+			deptno=#{deptno}
+		where empno = #{empno}
+	delete 
+	from emp01
+	where empno = #{empno}		
+2. dao/mapper 추가
+	int empUpdate(Emp upt);
+	int empDelete(@Param("empno") int empno);
+3. service
+	return dao.empUpdate(emp)+"건 수정성공";
+4. controller  
+	메서드 추가 empUpdate (POST)
+	d.addAttribute("proc","upt");
+	d.addAttribute("msg",service.empUpdate(emp));
+	d.addAttribute("emp",service.empList(emp));
+	메서드 추가 empDelete (GET)
+	d.addAttribute("proc","del");
+	d.addAttribute("msg",service.empDelete(empno));		
+5. view
+	var proc = "${proc}"
+	var msg = "${msg}"
+	if(msg!=""){
+		if(proc=="upt"){
+			if(confirm(msg+"\n메인화면으로 이동하시겠습니까")){
+				location.href="${path}/empList";
+			}
+		}
+		if(proc=="del"){
+			alert(msg+"\n메인화면이동합니다")
+			location.href="${path}/empList";
+		}
+	}
+	$("#uptBtn").click(function(){
+		$("form").attr("action","${path}/empUpdate")
+		$("form").submit()
+	})
+	$("#delBtn").click(function(){
+		var empno = $("[name=empno]").val()
+		location.href="${path}/empDelete?empno="+empno;
+	});
+
+
+# 상세화면에서 삭제 처리						 
+
+
+
+
+
+
+
+
+	
+		
+
+   
+	  		
+	  			
+		
+		 

@@ -1,0 +1,20 @@
+ # 스프링 부트 환경 구성 및 동작 방식
+ 1. 스프링 기본 동작 방식
+ 	1) 필요로 하는 lib/framework를 WEB-IN/lib에 다운로드 및 설정
+ 	2) dispatcher-servlet.xml(컨테이너)
+ 		- 위에서 lib안에서 필요로 하는 lib(*.jar)에 객체들을 선언
+ 		- 사용자 정의로 선언된 클래스를 선언
+ 		==> 객체화하여 톰캣(web application server)구동을 통해서
+ 		메모리에 로딩하여 활용한다.
+ 2. 스프링 부트의 동작 방식(maven)
+ 	1) pom.xml를 통해서 
+ 		- 필요로 하는 lib를 온라인상으로 다운로드 처리
+ 		- 위 lib중에 대부분은 자동으로 내부적으로 컨테이너에 선언 객체로
+ 		사용할 준비
+ 	2) application.properties
+ 		- 기타 설정 형식 선언하여 컨테이너에 할당(key=value)
+ 	3) 추가되는 컨테이너 설정파일 configuration 폴드 하위에 선언.
+ 		- 클래스 선언 상단에 @Configuration로 설정
+ 		
+ 	
+ 		 	

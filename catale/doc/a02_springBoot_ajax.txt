@@ -1,0 +1,111 @@
+# spring boot에서 비동기 통신시 사용되는 코드 형태
+1. springboot에서 화면단에 여러가지 비동기 통신으로 처리하는 경우가
+많고, 이를 보다 효과적으로 처리하기 위하 controller와 api를 
+지원하고 있다.
+	
+2. controller단 처리
+	1) @ResponseBody 형태로 요청값에 대한 처리를 json방식으로
+		처리하되 여러가지 type에 따라 처리하는 것을 말한다.
+		
+		ex) 
+		@PostMapping("/create")
+		@ResponseBody
+		public ResponseEntity<?> createItem(@RequestBody Dept ins){
+			// DB 입력 처리..
+			return ResponseEntity.ok(service.insertDept(ins));
+		}
+3. ajax 처리
+	1) 위 요청값을 호출하는 방식의 데이터 처리..
+		$.ajax({
+			url:"${path}/create",
+			type:"post",
+			contentType:"application/json"
+			data:JSON.stringify({/*데이터 객체 */})
+			success:function(response){
+				console.log(response)
+			}
+		
+		})	
+		
+# 사원번호 중복체크 ajax 처리..
+1. DB처리
+	1) sql
+	select count(*)
+	from emp01
+	where empno=1000;
+	2) dao @Select
+	int checkEmpno(@Param("empno") int empno);
+	
+
+2. service/controller 처리
+	service
+	
+	controller /checkEmpno get방식 요청값으로 empno
+
+3. 화면단
+	1) ajax처리 함수 정의
+		function ckEmpno(){
+			var empno=$("[name=empno]").val()
+			$.ajax({
+				url:"${path}/checkEmpno",
+				method:"get",
+				data:"empno="+empno,
+				dataType:"text",
+				success:function(cnt){
+					if(cnt>0){
+						alert("등록된 사원번호 입니다\n다시 입력하세요");
+						$("[name=empno]").val("").focus()
+					}
+				}
+			})
+		}
+
+# 부서정보 리스트 ajax를 통한 처리
+0. 리스트
+	1) 기본화면 로딩 후, ajax로 검색 처리.
+1. 등록(모달창로딩 후 ajax로 등록 처리) 
+2. 상세화면(ajax로 데이터 로딩 후, 수정/삭제할 수 있는 모달창 로딩)
+	
+3. 수정/삭제(상세화면 모달창에서 수정/삭제처리) 	
+	
+# 상세화면(기본데이터 출력 수정/삭제)모달창
+1. sql
+	select * from dept01 where deptno=#{deptno}
+2. dao/service
+	Dept getDept(@Param("deptno") int deptno);
+3. controller
+	getDept  get방식으로 deptno를 받아서 Dept정보를 ajax로 리턴되게 처리..
+------------------------진행 후 손들기..	
+	
+4. view단
+	row단위(tr) 더블클릭시 요청값으로 deptno를 보내서 전체 Dept 정보를
+	받게 ajax 처리 후, 모달창를 로딩 후, 화면에 출력 처리.
+				
+# ajax를 활용한 페이징 처리
+1. sql 변경
+	row
+2. vo 속성 추가(paging)
+	1) Sch VO 속성
+	2) 
+3. 화면단 처리..
+	1) 요청값과 연동하는 부분 가져오기 처리.
+	2) hidden으로 처리할 부분
+		현재 클릭한 페이지
+		한번에 보여줄 페이지 크기.
+		
+		 
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+		
+		
