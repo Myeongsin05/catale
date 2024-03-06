@@ -11,5 +11,16 @@ public class A01_Controller {
 	public String start() {
 		return "a01_start";
 	}
+	
+	// http://localhost:5050/start
+		@RequestMapping("index")
+		public String index() {
+			return "index";
+		}
+	
+	@RequestMapping("left")
+	public String left_sidebar() {
+		return "left-sidebar";
+	}
 
 }
