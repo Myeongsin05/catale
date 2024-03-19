@@ -23,7 +23,7 @@
 				<h1 id="logo">
 					<a href="/start">Catale</a>
 				</h1>
-				<p>고양이를 위한 반려동물 쇼핑몰</p>
+				<p>고양이 물품 전용 쇼핑몰</p>
 
 				<!-- Nav -->
 				<nav id="nav">
@@ -84,7 +84,9 @@
 								<li><a href="#">Veroeros feugiat</a></li>
 							</ul></li>
 							
-								<li><a href="#"><span>login</span></a></li><li><a href="#" class="icon"><i class="fas fa-cart-shopping"></i></a></li>
+								<li><a href="#"><span>login</span></a></li>
+								<li><a href="#"><span>회원가입</span></a></li>
+								<li><a href="#" class="icon"><i class="fas fa-cart-shopping"></i></a></li>
 						
 			
 

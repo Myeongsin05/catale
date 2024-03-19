@@ -15,6 +15,13 @@
 <html>
 				<!-- header -->
 				<%@ include file="/WEB-INF/views/a00_module/a01_header.jsp"%>
+				<!-- Banner -->
+				<section id="banner">
+					<div class="container">
+						<p>Use this space for <strong>profound thoughts</strong>.<br />
+						Or an enormous ad. Whatever.</p>
+					</div>
+				</section>
 
 			<!-- Features -->
 				<section id="features">
