@@ -15,6 +15,7 @@
 <html>
 				<!-- header -->
 				<%@ include file="/WEB-INF/views/a00_module/a01_header.jsp"%>
+				
 				<!-- Banner -->
 				<section id="banner">
 					<div class="container">
